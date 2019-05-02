@@ -1,7 +1,9 @@
-﻿namespace RutrackerXmlToDatabase.Core.Models
+﻿using System;
+
+namespace RutrackerXmlToDatabase.Core.Models
 {
-    public abstract class BaseModel
+    public class BaseModel<T> where T : IEquatable<T>
     {
-        public long Id { get; set; }
+        public T Id { get; set; }
     }
 }

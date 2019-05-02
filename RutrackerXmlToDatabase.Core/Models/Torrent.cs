@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace RutrackerXmlToDatabase.Core.Models
 {
-    public class Torrent : BaseModel
+    public class Torrent : BaseModel<long>
     {
         public DateTime Date { get; set; }
         public long Size { get; set; }
@@ -14,9 +14,10 @@ namespace RutrackerXmlToDatabase.Core.Models
         public string ForumTitle { get; set; }
         public bool IsDeleted { get; set; }
         public string Content { get; set; }
-        public ICollection<File> Files { get; set; }
         public int? DupConfidence { get; set; }
         public long? DupTorrentId { get; set; }
         public string DupTitile { get; set; }
+        
+        public ICollection<File> Files { get; set; }
     }
 }

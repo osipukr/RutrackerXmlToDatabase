@@ -19,7 +19,7 @@ namespace RutrackerXmlToDatabase.Core.Importers
         /// <param name="connectionString">The connection string to the database.</param>
         /// <param name="filePath">The path to the file to import.</param>
         /// <param name="maxCount">Maximum number of entities to read at a time.</param>
-        public static void Import(string connectionString, string filePath, int maxCount)
+        public static void Import(string connectionString, string filePath, int maxCount = 5000)
         {
             if (string.IsNullOrEmpty(connectionString))
             {

@@ -1,6 +1,6 @@
 ﻿namespace RutrackerXmlToDatabase.Core.Models
 {
-    public class File : BaseModel
+    public class File : BaseModel<long>
     {
         public long Size { get; set; }
         public string Name { get; set; }

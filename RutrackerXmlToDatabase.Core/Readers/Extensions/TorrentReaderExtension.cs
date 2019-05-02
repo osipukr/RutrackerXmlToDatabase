@@ -11,18 +11,13 @@ namespace RutrackerXmlToDatabase.Core.Readers.Extensions
     {
         public static IEnumerable<XElement> ReadXElements(this XmlReader reader, int maxCount)
         {
-            if (reader == null)
-            {
-                throw new ArgumentNullException(nameof(reader));
-            }
-
             var count = 0;
 
             while (count != maxCount && reader.Read())
             {
-                if (reader.NodeType != XmlNodeType.Element
-                        || reader.Name != "torrent"
-                        || reader.AttributeCount != 3)
+                if (!(reader.NodeType == XmlNodeType.Element
+                        && reader.Name == "torrent"
+                        && reader.AttributeCount == 3))
                 {
                     continue;
                 }
@@ -38,42 +33,32 @@ namespace RutrackerXmlToDatabase.Core.Readers.Extensions
 
         public static IEnumerable<Torrent> ReadTorrents(this IEnumerable<XElement> torrents)
         {
-            if (torrents == null)
+            return torrents.Select(t =>
             {
-                throw new ArgumentNullException(nameof(torrents));
-            }
-
-            return torrents.Select(x =>
-            {
-                long.TryParse(x.Attribute("size").Value, out long size);
+                long.TryParse(t.Attribute("size").Value, out long size);
 
                 return new Torrent()
                 {
-                    Id = (long)x.Attribute("id"),
-                    Date = DateTime.Parse((string)x.Attribute("registred_at")),
+                    Id = (long)t.Attribute("id"),
+                    Date = DateTime.Parse((string)t.Attribute("registred_at")),
                     Size = size,
-                    Title = (string)x.Element("title"),
-                    Hash = (string)x.Element("torrent").Attribute("hash"),
-                    TrackerId = (long)x.Element("torrent").Attribute("tracker_id"),
-                    ForumId = (long)x.Element("forum").Attribute("id"),
-                    ForumTitle = (string)x.Element("forum"),
-                    IsDeleted = x.Element("del") != null,
-                    Content = (string)x.Element("content"),
-                    DupConfidence = (int?)x.Element("dup")?.Attribute("p"),
-                    DupTorrentId = (long?)x.Element("dup")?.Attribute("id"),
-                    DupTitile = (string)x.Element("dup"),
-                    Files = x.ReadTorrentFiles().ToArray()
+                    Title = (string)t.Element("title"),
+                    Hash = (string)t.Element("torrent").Attribute("hash"),
+                    TrackerId = (long)t.Element("torrent").Attribute("tracker_id"),
+                    ForumId = (long)t.Element("forum").Attribute("id"),
+                    ForumTitle = (string)t.Element("forum"),
+                    IsDeleted = t.Element("del") != null,
+                    Content = (string)t.Element("content"),
+                    DupConfidence = (int?)t.Element("dup")?.Attribute("p"),
+                    DupTorrentId = (long?)t.Element("dup")?.Attribute("id"),
+                    DupTitile = (string)t.Element("dup"),
+                    Files = t.ReadTorrentFiles().ToArray()
                 };
             });
         }
 
         private static IEnumerable<File> ReadTorrentFiles(this XElement torrent)
         {
-            if (torrent == null)
-            {
-                throw new ArgumentNullException(nameof(torrent));
-            }
-
             var torrentId = (long)torrent.Attribute("id");
 
             return torrent.Elements("file").Select(f => new File()
