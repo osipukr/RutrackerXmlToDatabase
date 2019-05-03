@@ -10,7 +10,6 @@ namespace RutrackerXmlToDatabase.Core.Readers
 {
     public class TorrentReader : IDisposable
     {
-        private readonly string _path;
         private readonly FileStream _fileStream;
         private readonly GZipStream _gZipStream;
         private readonly XmlReader _xmlReader;
@@ -19,9 +18,7 @@ namespace RutrackerXmlToDatabase.Core.Readers
 
         public TorrentReader(string path)
         {
-            _path = path;
-
-            _fileStream = System.IO.File.OpenRead(_path);
+            _fileStream = System.IO.File.OpenRead(path);
             _gZipStream = new GZipStream(_fileStream, CompressionMode.Decompress);
             _xmlReader = XmlReader.Create(_gZipStream, new XmlReaderSettings()
             {

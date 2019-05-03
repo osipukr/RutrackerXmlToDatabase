@@ -8,7 +8,6 @@ namespace RutrackerXmlToDatabase.Core.Contexts.Configurations
     {
         public void Configure(EntityTypeBuilder<File> builder)
         {
-            // TODO: Setting properties
             builder.ToTable("Files");
             builder.Property(f => f.Id).ValueGeneratedOnAdd().IsRequired();
 

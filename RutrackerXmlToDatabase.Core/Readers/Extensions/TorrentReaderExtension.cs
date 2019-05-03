@@ -17,17 +17,15 @@ namespace RutrackerXmlToDatabase.Core.Readers.Extensions
             {
                 if (!(reader.NodeType == XmlNodeType.Element
                         && reader.Name == "torrent"
-                        && reader.AttributeCount == 3))
+                        && reader.AttributeCount == 3
+                        && XNode.ReadFrom(reader) is XElement element))
                 {
                     continue;
                 }
 
-                if (XNode.ReadFrom(reader) is XElement element)
-                {
-                    yield return element;
+                yield return element;
 
-                    count++;
-                }
+                count++;
             }
         }
 
@@ -35,7 +33,11 @@ namespace RutrackerXmlToDatabase.Core.Readers.Extensions
         {
             return torrents.Select(t =>
             {
-                long.TryParse(t.Attribute("size").Value, out long size);
+                long.TryParse((string)t.Attribute("size"), out var size);
+
+                var torrent = t.Element("torrent");
+                var forum = t.Element("forum");
+                var dup = t.Element("dup");
 
                 return new Torrent()
                 {
@@ -43,15 +45,15 @@ namespace RutrackerXmlToDatabase.Core.Readers.Extensions
                     Date = DateTime.Parse((string)t.Attribute("registred_at")),
                     Size = size,
                     Title = (string)t.Element("title"),
-                    Hash = (string)t.Element("torrent").Attribute("hash"),
-                    TrackerId = (long)t.Element("torrent").Attribute("tracker_id"),
-                    ForumId = (long)t.Element("forum").Attribute("id"),
-                    ForumTitle = (string)t.Element("forum"),
+                    Hash = (string)torrent?.Attribute("hash"),
+                    TrackerId = (long)torrent?.Attribute("tracker_id"),
+                    ForumId = (long)forum?.Attribute("id"),
+                    ForumTitle = (string)forum,
                     IsDeleted = t.Element("del") != null,
                     Content = (string)t.Element("content"),
-                    DupConfidence = (int?)t.Element("dup")?.Attribute("p"),
-                    DupTorrentId = (long?)t.Element("dup")?.Attribute("id"),
-                    DupTitile = (string)t.Element("dup"),
+                    DupConfidence = (int?)dup?.Attribute("p"),
+                    DupTorrentId = (long?)dup?.Attribute("id"),
+                    DupTitle = (string)dup,
                     Files = t.ReadTorrentFiles().ToArray()
                 };
             });

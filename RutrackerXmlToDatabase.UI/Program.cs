@@ -4,14 +4,14 @@ namespace RutrackerXmlToDatabase.UI
 {
     public class Program
     {
-        private static string ResoucesPath => @"..\..\..\..\RutrackerXmlToDatabase.Core\Resources\";
-        private static string ConntectionString => @"Server=localhost;Database=rutrackers-db;Trusted_Connection=True;";
+        private static string ResourcesPath => @"..\..\..\..\RutrackerXmlToDatabase.Core\Resources\";
+        private static string ConnectionString => @"Server=localhost;Database=rutracker-db;Trusted_Connection=True;";
 
-        private static void Main(string[] args)
+        private static void Main()
         {
-            var fileName = "rutracker-20190323.xml.gz";
+            const string fileName = "rutracker-20190323.xml.gz";
 
-            TorrentImporter.Import(ConntectionString, ResoucesPath + fileName);
+            TorrentImporter.Import(ConnectionString, ResourcesPath + fileName);
         }
     }
 }

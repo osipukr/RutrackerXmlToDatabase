@@ -2,8 +2,8 @@
 
 namespace RutrackerXmlToDatabase.Core.Models
 {
-    public class BaseModel<T> where T : IEquatable<T>
+    public class BaseModel<TPrimaryKey> where TPrimaryKey : IEquatable<TPrimaryKey>
     {
-        public T Id { get; set; }
+        public TPrimaryKey Id { get; set; }
     }
 }

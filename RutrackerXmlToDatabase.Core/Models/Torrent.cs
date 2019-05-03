@@ -16,7 +16,7 @@ namespace RutrackerXmlToDatabase.Core.Models
         public string Content { get; set; }
         public int? DupConfidence { get; set; }
         public long? DupTorrentId { get; set; }
-        public string DupTitile { get; set; }
+        public string DupTitle { get; set; }
         
         public ICollection<File> Files { get; set; }
     }

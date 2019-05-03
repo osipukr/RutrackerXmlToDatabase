@@ -8,7 +8,6 @@ namespace RutrackerXmlToDatabase.Core.Contexts.Configurations
     {
         public void Configure(EntityTypeBuilder<Torrent> builder)
         {
-            // TODO: Setting properties
             builder.ToTable("Torrents");
             builder.Property(t => t.Id).ValueGeneratedNever().IsRequired();
 
