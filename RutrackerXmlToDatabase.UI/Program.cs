@@ -1,4 +1,5 @@
-﻿using RutrackerXmlToDatabase.Core.Importers;
+﻿using System.Threading.Tasks;
+using RutrackerXmlToDatabase.Core.Importers;
 
 namespace RutrackerXmlToDatabase.UI
 {
@@ -7,11 +8,11 @@ namespace RutrackerXmlToDatabase.UI
         private static string ResourcesPath => @"..\..\..\..\RutrackerXmlToDatabase.Core\Resources\";
         private static string ConnectionString => @"Server=localhost;Database=rutracker-db;Trusted_Connection=True;";
 
-        private static void Main()
+        private static async Task Main()
         {
             const string fileName = "rutracker-20190323.xml.gz";
 
-            TorrentImporter.Import(ConnectionString, ResourcesPath + fileName);
+            await TorrentImporter.ImportAsync(ConnectionString, ResourcesPath + fileName);
         }
     }
 }

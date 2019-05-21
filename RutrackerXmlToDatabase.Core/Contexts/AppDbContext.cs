@@ -12,6 +12,7 @@ namespace RutrackerXmlToDatabase.Core.Contexts
             Database.EnsureCreated();
         }
 
+        public DbSet<Forum> Forums { get; set; }
         public DbSet<Torrent> Torrents { get; set; }
         public DbSet<File> Files { get; set; }
 
@@ -19,6 +20,7 @@ namespace RutrackerXmlToDatabase.Core.Contexts
         {
             base.OnModelCreating(builder);
 
+            builder.ApplyConfiguration(new ForumConfiguration());
             builder.ApplyConfiguration(new TorrentConfiguration());
             builder.ApplyConfiguration(new FileConfiguration());
         }

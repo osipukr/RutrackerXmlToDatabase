@@ -36,7 +36,6 @@ namespace RutrackerXmlToDatabase.Core.Readers.Extensions
                 long.TryParse((string)t.Attribute("size"), out var size);
 
                 var torrent = t.Element("torrent");
-                var forum = t.Element("forum");
                 var dup = t.Element("dup");
 
                 return new Torrent()
@@ -47,8 +46,7 @@ namespace RutrackerXmlToDatabase.Core.Readers.Extensions
                     Title = (string)t.Element("title"),
                     Hash = (string)torrent?.Attribute("hash"),
                     TrackerId = (long)torrent?.Attribute("tracker_id"),
-                    ForumId = (long)forum?.Attribute("id"),
-                    ForumTitle = (string)forum,
+                    Forum = t.ReadTorrentForum(),
                     IsDeleted = t.Element("del") != null,
                     Content = (string)t.Element("content"),
                     DupConfidence = (int?)dup?.Attribute("p"),
@@ -57,6 +55,17 @@ namespace RutrackerXmlToDatabase.Core.Readers.Extensions
                     Files = t.ReadTorrentFiles().ToArray()
                 };
             });
+        }
+
+        private static Forum ReadTorrentForum(this XElement torrent)
+        {
+            var forum = torrent.Element("forum");
+
+            return new Forum()
+            {
+                Id = (long)forum?.Attribute("id"),
+                Title = (string)forum
+            };
         }
 
         private static IEnumerable<File> ReadTorrentFiles(this XElement torrent)
