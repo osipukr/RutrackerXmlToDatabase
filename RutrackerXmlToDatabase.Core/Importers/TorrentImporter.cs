@@ -19,9 +19,9 @@ namespace RutrackerXmlToDatabase.Core.Importers
         /// </summary>
         /// <param name="connectionString">The connection string to the database.</param>
         /// <param name="filePath">The path to the file to import.</param>
-        /// <param name="maxCount">Maximum number of entities to read at a time.</param>
+        /// <param name="readCount">Maximum number of entities to read at a time.</param>
         /// <exception cref="ArgumentException"></exception>
-        public static async Task ImportAsync(string connectionString, string filePath, int maxCount = 5000)
+        public static async Task ImportAsync(string connectionString, string filePath, int readCount = 5000)
         {
             if (string.IsNullOrEmpty(connectionString))
             {
@@ -33,9 +33,9 @@ namespace RutrackerXmlToDatabase.Core.Importers
                 throw new ArgumentException("Invalid file path.", nameof(filePath));
             }
 
-            if (maxCount <= 0)
+            if (readCount < 1)
             {
-                throw new ArgumentException("The maximum number of elements must be greater than 0.", nameof(maxCount));
+                throw new ArgumentException("The maximum number of elements must be greater than 1.", nameof(readCount));
             }
 
             var dbOptions = new DbContextOptionsBuilder<AppDbContext>()
@@ -44,7 +44,7 @@ namespace RutrackerXmlToDatabase.Core.Importers
 
             void BulkOptions(BulkOperation<Torrent> options)
             {
-                options.BatchSize = maxCount;
+                options.BatchSize = readCount;
                 options.IncludeGraph = true;
                 options.IncludeGraphOperationBuilder = operation =>
                 {
@@ -63,7 +63,7 @@ namespace RutrackerXmlToDatabase.Core.Importers
             {
                 while (!reader.EOF)
                 {
-                    var torrents = reader.Read(maxCount);
+                    var torrents = reader.Read(readCount);
 
                     await context.BulkInsertAsync(torrents, BulkOptions);
                     await context.BulkSaveChangesAsync();

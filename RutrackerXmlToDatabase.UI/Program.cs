@@ -12,7 +12,7 @@ namespace RutrackerXmlToDatabase.UI
         {
             const string fileName = "rutracker-20190323.xml.gz";
 
-            await TorrentImporter.ImportAsync(ConnectionString, ResourcesPath + fileName);
+            await TorrentImporter.ImportAsync(ConnectionString, ResourcesPath + fileName, 10000);
         }
     }
 }
