@@ -72,7 +72,7 @@ namespace RutrackerXmlToDatabase.Core.Readers.Extensions
         {
             var torrentId = (long)torrent.Attribute("id");
 
-            return torrent.Elements("file").Select(f => new File()
+            return torrent.Descendants("file").Select(f => new File()
             {
                 Size = (long)f.Attribute("size"),
                 Name = (string)f.Attribute("name"),
