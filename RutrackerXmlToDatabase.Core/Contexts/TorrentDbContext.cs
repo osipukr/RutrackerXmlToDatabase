@@ -4,17 +4,16 @@ using RutrackerXmlToDatabase.Core.Models;
 
 namespace RutrackerXmlToDatabase.Core.Contexts
 {
-    public sealed class AppDbContext : DbContext
+    public class TorrentDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options)
+        public TorrentDbContext(DbContextOptions<TorrentDbContext> options)
             : base(options)
         {
-            Database.EnsureCreated();
         }
 
-        public DbSet<Forum> Forums { get; set; }
-        public DbSet<Torrent> Torrents { get; set; }
-        public DbSet<File> Files { get; set; }
+        public virtual DbSet<Forum> Forums { get; set; }
+        public virtual DbSet<Torrent> Torrents { get; set; }
+        public virtual DbSet<File> Files { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

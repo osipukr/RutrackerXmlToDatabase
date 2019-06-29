@@ -23,22 +23,23 @@ namespace RutrackerXmlToDatabase.Core.Importers
         /// <exception cref="ArgumentException"></exception>
         public static async Task ImportAsync(string connectionString, string filePath, int readCount = 5000)
         {
-            if (string.IsNullOrEmpty(connectionString))
+            if (string.IsNullOrWhiteSpace(connectionString))
             {
                 throw new ArgumentException("Not a valid connection string.", nameof(connectionString));
             }
 
-            if (string.IsNullOrEmpty(filePath))
+            if (string.IsNullOrWhiteSpace(filePath))
             {
                 throw new ArgumentException("Invalid file path.", nameof(filePath));
             }
 
             if (readCount < 1)
             {
-                throw new ArgumentException("The maximum number of elements must be greater than 1.", nameof(readCount));
+                throw new ArgumentOutOfRangeException(nameof(readCount),
+                    "The maximum number of elements must be greater than 1.");
             }
 
-            var dbOptions = new DbContextOptionsBuilder<AppDbContext>()
+            var dbOptions = new DbContextOptionsBuilder<TorrentDbContext>()
                 .UseSqlServer(connectionString)
                 .Options;
 
@@ -56,18 +57,19 @@ namespace RutrackerXmlToDatabase.Core.Importers
                 };
             }
 
-            EntityFrameworkManager.ContextFactory = context => new AppDbContext(dbOptions);
+            EntityFrameworkManager.ContextFactory = x => new TorrentDbContext(dbOptions);
 
-            using (var context = new AppDbContext(dbOptions))
-            using (var reader = new TorrentReader(filePath))
+            using var context = new TorrentDbContext(dbOptions);
+            using var reader = new TorrentReader(filePath);
+
+            await context.Database.EnsureCreatedAsync();
+
+            while (!reader.EOF)
             {
-                while (!reader.EOF)
-                {
-                    var torrents = reader.Read(readCount);
+                var torrents = reader.Read(readCount);
 
-                    await context.BulkInsertAsync(torrents, BulkOptions);
-                    await context.BulkSaveChangesAsync();
-                }
+                await context.BulkInsertAsync(torrents, BulkOptions);
+                await context.BulkSaveChangesAsync();
             }
         }
     }

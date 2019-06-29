@@ -29,39 +29,39 @@ namespace RutrackerXmlToDatabase.Core.Readers.Extensions
             }
         }
 
-        public static IEnumerable<Torrent> ReadTorrents(this IEnumerable<XElement> torrents)
-        {
-            return torrents.Select(t =>
+        public static IEnumerable<Torrent> ReadTorrents(this IEnumerable<XElement> torrents) =>
+            torrents.Select(t =>
             {
-                long.TryParse((string)t.Attribute("size"), out var size);
+                long.TryParse((string) t.Attribute("size"), out var size);
 
                 var torrent = t.Element("torrent");
+                var forum = t.ReadTorrentForum();
                 var dup = t.Element("dup");
 
-                return new Torrent()
+                return new Torrent
                 {
-                    Id = (long)t.Attribute("id"),
-                    Date = DateTime.Parse((string)t.Attribute("registred_at")),
+                    Id = (long) t.Attribute("id"),
+                    Date = DateTime.Parse((string) t.Attribute("registred_at")),
                     Size = size,
-                    Title = (string)t.Element("title"),
-                    Hash = (string)torrent?.Attribute("hash"),
-                    TrackerId = (long)torrent?.Attribute("tracker_id"),
-                    Forum = t.ReadTorrentForum(),
+                    Title = (string) t.Element("title"),
+                    Hash = (string) torrent?.Attribute("hash"),
+                    TrackerId = (long) torrent?.Attribute("tracker_id"),
+                    Forum = forum,
+                    ForumId = forum.Id,
                     IsDeleted = t.Element("del") != null,
-                    Content = (string)t.Element("content"),
-                    DupConfidence = (int?)dup?.Attribute("p"),
-                    DupTorrentId = (long?)dup?.Attribute("id"),
-                    DupTitle = (string)dup,
+                    Content = (string) t.Element("content"),
+                    DupConfidence = (int?) dup?.Attribute("p"),
+                    DupTorrentId = (long?) dup?.Attribute("id"),
+                    DupTitle = (string) dup,
                     Files = t.ReadTorrentFiles().ToArray()
                 };
             });
-        }
 
         private static Forum ReadTorrentForum(this XElement torrent)
         {
             var forum = torrent.Element("forum");
 
-            return new Forum()
+            return new Forum
             {
                 Id = (long)forum?.Attribute("id"),
                 Title = (string)forum
@@ -72,7 +72,7 @@ namespace RutrackerXmlToDatabase.Core.Readers.Extensions
         {
             var torrentId = (long)torrent.Attribute("id");
 
-            return torrent.Descendants("file").Select(f => new File()
+            return torrent.Descendants("file").Select(f => new File
             {
                 Size = (long)f.Attribute("size"),
                 Name = (string)f.Attribute("name"),
